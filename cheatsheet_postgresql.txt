@@ -1,0 +1,26 @@
+# Init postgres:
+
+# As root:
+sudo -u postgres -i
+
+# As user postgres:
+createuser -s sunxi-mw
+
+# Create db:
+createdb -T template0 mediawiki
+
+# restore db:
+psql mediawiki < sunxi/wiki/postgresql.sql
+
+# drop db:
+dropdb mediawiki
+
+# grant privileges:
+
+grant all privileges on all tables in schema mediawiki to libv;
+
+# list tables:
+
+psql -d mediawiki -c "\dt mediawiki.*;"
+
+# describe table

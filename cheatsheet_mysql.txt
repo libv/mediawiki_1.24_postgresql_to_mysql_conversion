@@ -1,0 +1,13 @@
+create user 'libv'@'localhost';
+
+GRANT ALL PRIVILEGES ON * . * TO 'libv'@'localhost';
+
+show databases;
+
+use mediawiki;
+
+show tables;
+
+dump table creation:
+
+mysqldump --no-data mediawiki-ori
