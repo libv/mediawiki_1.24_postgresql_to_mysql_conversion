@@ -223,7 +223,7 @@ CREATE TABLE `imagelinks` (
   `il_from_namespace` int(11) NOT NULL DEFAULT 0,
   `il_to` varbinary(255) NOT NULL DEFAULT '',
   UNIQUE KEY `il_from` (`il_from`,`il_to`),
-  KEY `il_to` (`il_to`,`il_from`),
+  UNIQUE KEY `il_to` (`il_to`,`il_from`),
   KEY `il_backlinks_namespace` (`il_to`,`il_from_namespace`,`il_from`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -408,6 +408,42 @@ CREATE TABLE `logging` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `math`
+--
+
+DROP TABLE IF EXISTS `math`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `math` (
+  `math_inputhash` varbinary(16) NOT NULL,
+  `math_outputhash` varbinary(16) NOT NULL,
+  `math_html_conservativeness` tinyint(4) NOT NULL,
+  `math_html` blob DEFAULT NULL,
+  `math_mathml` blob DEFAULT NULL,
+  PRIMARY KEY (`math_inputhash`)
+) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `mathoid`
+--
+
+DROP TABLE IF EXISTS `mathoid`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `mathoid` (
+  `math_inputhash` varbinary(16) NOT NULL,
+  `math_input` blob NOT NULL,
+  `math_tex` blob DEFAULT NULL,
+  `math_mathml` blob DEFAULT NULL,
+  `math_svg` blob DEFAULT NULL,
+  `math_style` tinyint(4) DEFAULT NULL,
+  `math_input_type` tinyint(4) DEFAULT NULL,
+  PRIMARY KEY (`math_inputhash`)
+) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `module_deps`
 --
 
@@ -583,7 +619,7 @@ CREATE TABLE `pagelinks` (
   `pl_namespace` int(11) NOT NULL DEFAULT 0,
   `pl_title` varbinary(255) NOT NULL DEFAULT '',
   UNIQUE KEY `pl_from` (`pl_from`,`pl_namespace`,`pl_title`),
-  KEY `pl_namespace` (`pl_namespace`,`pl_title`,`pl_from`),
+  UNIQUE KEY `pl_namespace` (`pl_namespace`,`pl_title`,`pl_from`),
   KEY `pl_backlinks_namespace` (`pl_namespace`,`pl_title`,`pl_from_namespace`,`pl_from`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -867,7 +903,7 @@ CREATE TABLE `templatelinks` (
   `tl_namespace` int(11) NOT NULL DEFAULT 0,
   `tl_title` varbinary(255) NOT NULL DEFAULT '',
   UNIQUE KEY `tl_from` (`tl_from`,`tl_namespace`,`tl_title`),
-  KEY `tl_namespace` (`tl_namespace`,`tl_title`,`tl_from`),
+  UNIQUE KEY `tl_namespace` (`tl_namespace`,`tl_title`,`tl_from`),
   KEY `tl_backlinks_namespace` (`tl_namespace`,`tl_title`,`tl_from_namespace`,`tl_from`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -897,7 +933,7 @@ DROP TABLE IF EXISTS `transcache`;
 CREATE TABLE `transcache` (
   `tc_url` varbinary(255) NOT NULL,
   `tc_contents` blob DEFAULT NULL,
-  `tc_time` binary(14) NOT NULL,
+  `tc_time` binary(14) DEFAULT NULL,
   UNIQUE KEY `tc_url_idx` (`tc_url`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1079,4 +1115,4 @@ CREATE TABLE `watchlist` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-08-03 14:31:31
+-- Dump completed on 2021-08-03 16:53:06
