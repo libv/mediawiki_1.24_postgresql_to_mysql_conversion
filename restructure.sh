@@ -116,3 +116,20 @@ for table in "${psql_tables[@]}"; do
 	exit
     fi
 done
+
+for table in "${psql_tables[@]}"; do
+    echo "Fixing up $table.data"
+    echo "Fixing up $table.data" >> $dumplog
+    sed -i \
+	-e s/"^INSERT INTO mediawiki\."/"INSERT INTO "/ \
+	-e /"^SET statement_timeout"/d \
+	-e /"^SET lock_timeout"/d \
+	-e /"^SET idle_in_transaction_session_timeout"/d \
+	-e /"^SET client_encoding"/d \
+	-e /"^SET standard_conforming_strings"/d \
+	-e /"^SELECT pg_catalog.set_config"/d \
+	-e /"^SET check_function_bodies"/d \
+	-e /"^SET xmloption"/d \
+	-e /"^SET client_min_messages"/d \
+	-e /"^SET row_security"/d $table.data
+done
