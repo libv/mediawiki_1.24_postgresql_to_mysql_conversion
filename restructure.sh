@@ -1,12 +1,21 @@
 #! /bin/bash
-
-dbname=tmpdb
-dumpfile=postgresql.sql
-dumplog=restructure_dumpload.log
-
 #
 # Restructure an existing mediawiki db into something matching the mysql db
 #
+
+dbname=tmpdb
+dumpfile=$1
+dumplog=restructure.log
+
+#
+#
+#
+head $dumpfile | grep -- "-- PostgreSQL database dump" > /dev/null
+if (( $? != 0 )); then
+    echo "Error: dump file $dumpfile is not a postgresql dump."
+    exit
+fi
+
 echo "" >> $dumplog
 echo "Logging to $dumplog"
 
@@ -91,8 +100,8 @@ psql_tables=(
 )
 
 for table in "${psql_tables[@]}"; do
-    echo "Restructuring psql table $table"
-    echo "Restructuring psql table $table" >> $dumplog
+    echo "Restructuring psql $dbname table $table"
+    echo "Restructuring psql $dbname table $table" >> $dumplog
     psql $dbname < tables/$table.sql >> $dumplog
     if (( $? != 0 )); then
 	exit
@@ -100,8 +109,8 @@ for table in "${psql_tables[@]}"; do
 done
 
 for table in "${psql_tables[@]}"; do
-    echo "Dumping psql table $table to $table.data"
-    echo "Dumping psql table $table to $table.data" >> $dumplog
+    echo "Dumping psql $dbname table $table to $table.data"
+    echo "Dumping psql $dbname table $table to $table.data" >> $dumplog
     pg_dump -t mediawiki.$table --data-only --inserts $dbname > $table.data
     if (( $? != 0 )); then
 	exit
