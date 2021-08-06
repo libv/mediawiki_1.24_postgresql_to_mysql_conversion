@@ -7,6 +7,9 @@ dbname=tmpdb
 dumpfile=$1
 dumplog=restructure.log
 
+dbnew=mediawiki
+dbnewfile=mysql_mediawiki_1.24_skeleton.sql
+
 #
 #
 #
@@ -45,6 +48,12 @@ echo "alter database $dbname set search_path = mediawiki, public;" | psql $dbnam
 # as they probably were upgraded away from.
 #
 # "config", "external_user", "profiling"
+#
+# The following tables are just caches and will be regenerated:
+# math
+# l10n_cache
+# objectcache
+#
 psql_tables=(
 	"archive"
 	"category"
@@ -59,17 +68,14 @@ psql_tables=(
 	"ipblocks"
 	"iwlinks"
 	"job"
-	"l10n_cache"
 	"langlinks"
 	"log_search"
 	"logging"
-	"math"
 	"mathoid"
 	"module_deps"
 	"msg_resource"
 	"msg_resource_links"
 	"mwuser"
-	"objectcache"
 	"oldimage"
 	"page"
 	"page_props"
@@ -142,3 +148,36 @@ sed -i s/"^INSERT INTO mwuser "/"INSERT INTO user "/ mwuser.data
 echo "Renaming table pagecontent to text in pagecontent.data"
 echo "Renaming table pagecontent to text in pagecontent.data" >> $dumplog
 sed -i s/"^INSERT INTO pagecontent "/"INSERT INTO text "/ pagecontent.data
+
+db=`echo "show databases;" | mysql | grep "^$dbnew$"`
+if [ -n "$db" ]; then
+    echo "Dropping old mysql DB $dbnew"
+    echo "Dropping old mysql DB $dbnew" >> $dumplog
+    echo "drop database $dbnew;" | mysql >> $dumplog
+    if (( $? != 0 )); then
+	exit
+    fi
+fi
+
+echo "Creating new mysql DB $dbnew"
+echo "Creating new mysql DB $dbnew" >> $dumplog
+echo "create database $dbnew;" | mysql >> $dumplog
+if (( $? != 0 )); then
+    exit
+fi
+
+echo "Loading mysql skeleton file $dbnewfile into mysql DB $dbnew"
+echo "Loading mysql skeleton file $dbnewfile into mysql DB $dbnew" >> $dumplog
+mysql $dbnew < $dbnewfile >> $dumplog
+if (( $? != 0 )); then
+    exit
+fi
+
+for table in "${psql_tables[@]}"; do
+    echo "Loading $table.data into mysql DB $dbnew"
+    echo "Loading $table.data into mysql DB $dbnew" >> $dumplog
+    mysql $dbnew < $table.data >> $dumplog
+    if (( $? != 0 )); then
+	exit
+    fi
+done
