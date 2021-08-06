@@ -121,6 +121,7 @@ for table in "${psql_tables[@]}"; do
     echo "Fixing up $table.data"
     echo "Fixing up $table.data" >> $dumplog
     sed -i \
+	-e 's/\\/\\\\/g' \
 	-e s/"^INSERT INTO mediawiki\."/"INSERT INTO "/ \
 	-e /"^SET statement_timeout"/d \
 	-e /"^SET lock_timeout"/d \
@@ -133,3 +134,11 @@ for table in "${psql_tables[@]}"; do
 	-e /"^SET client_min_messages"/d \
 	-e /"^SET row_security"/d $table.data
 done
+
+echo "Renaming table mwuser to user in mwuser.data"
+echo "Renaming table mwuser to user in mwuser.data" >> $dumplog
+sed -i s/"^INSERT INTO mwuser "/"INSERT INTO user "/ mwuser.data
+
+echo "Renaming table pagecontent to text in pagecontent.data"
+echo "Renaming table pagecontent to text in pagecontent.data" >> $dumplog
+sed -i s/"^INSERT INTO pagecontent "/"INSERT INTO text "/ pagecontent.data
