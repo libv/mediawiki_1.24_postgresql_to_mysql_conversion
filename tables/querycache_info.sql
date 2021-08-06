@@ -1,5 +1,5 @@
 CREATE VIEW tmp_view AS
- select qci_type, qci_timestamp FROM querycache_info;
+ select qci_type, to_char(qci_timestamp at time zone 'UTC', 'YYYY:MM:DD:HH24:MI:SS') qci_timestamp FROM querycache_info;
 SELECT * INTO tmp_table FROM tmp_view;
 DROP VIEW tmp_view;
 update tmp_table set qci_type = '' where qci_type is NULL;

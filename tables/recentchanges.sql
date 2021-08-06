@@ -1,5 +1,5 @@
 CREATE VIEW tmp_view AS
- select rc_id, rc_timestamp, rc_user, rc_user_text, rc_namespace, rc_title, rc_comment, rc_minor, rc_bot, rc_new, rc_cur_id, rc_this_oldid, rc_last_oldid, rc_type, rc_source, rc_patrolled, rc_ip, rc_old_len, rc_new_len, rc_deleted, rc_logid, rc_log_type, rc_log_action, rc_params FROM recentchanges;
+ select rc_id, to_char(rc_timestamp at time zone 'UTC', 'YYYY:MM:DD:HH24:MI:SS') rc_timestamp, rc_user, rc_user_text, rc_namespace, rc_title, rc_comment, rc_minor, rc_bot, rc_new, rc_cur_id, rc_this_oldid, rc_last_oldid, rc_type, rc_source, rc_patrolled, rc_ip, rc_old_len, rc_new_len, rc_deleted, rc_logid, rc_log_type, rc_log_action, rc_params FROM recentchanges;
 SELECT * INTO tmp_table FROM tmp_view;
 DROP VIEW tmp_view;
 update tmp_table set rc_user = 0 where rc_user is NULL;

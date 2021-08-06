@@ -24,3 +24,8 @@ grant all privileges on all tables in schema mediawiki to libv;
 psql -d mediawiki -c "\dt mediawiki.*;"
 
 # describe table
+
+
+# Generate timestamp strings:
+
+grep timestamp *.description | grep ":    " | awk '{ print $1 "\tto_char(" $2 " at time zone '\''UTC'\'', '\''YYYY:MM:DD:HH24:MI:SS'\'') " $2 }'
