@@ -1,0 +1,11 @@
+Dump postgresql db:
+
+# pg_dump wiki-backup.postgres.sql
+
+Run the script:
+
+# ./restructure.sh wiki-backup.postgres.sql
+
+Dump mysql db:
+
+# mysqldump mediawiki > wiki-converted.my.sql
